@@ -1,13 +1,18 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
+let tokenBlacklist = [];
+
 class AuthController {
     async register(req, res) {
         const { username, email, password } = req.body;
         try {
+            const existingUser = await User.findOne({ $or: [{ username }, { email }] });
+            if (existingUser) {
+                return res.status(400).json({ message: 'Username or email already taken' });
+            }
             const user = new User({ username, email, password });
             await user.save();
-
             const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
             res.status(201).json({ token, user: { id: user._id, username, email, role: user.role } });
         } catch (error) {
@@ -30,6 +35,20 @@ class AuthController {
             res.status(500).json({ message: 'Error during login', error });
         }
     }
+
+    async logout(req, res) {
+        const token = req.headers.authorization?.split(' ')[1];
+        if (!token) return res.status(400).json({ message: 'Token is required for logout' });
+
+        try {
+            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            tokenBlacklist.push(token);
+            res.status(200).json({ message: 'Successfully logged out' });
+        } catch (error) {
+            res.status(400).json({ message: 'Invalid or expired token', error });
+        }
+    }
+
 }
 
 module.exports = new AuthController();

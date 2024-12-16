@@ -1,3 +1,5 @@
+const path = require('path')
+const fs = require('fs')
 const Book = require('../models/Book');
 const Reservation = require('../models/Reservation');
 
@@ -7,8 +9,11 @@ class BookService {
         const filter = {};
         if (name) filter.name = { $regex: name, $options: 'i' };
         if (author) filter.author = { $regex: author, $options: 'i' };
-
-        return Book.find(filter).populate('owner', 'username');
+        const books = await Book.find(filter).populate('owner', 'username');
+        return books.map(book => ({
+            ...book._doc,
+            photo: book.photo ? `http://localhost:8000/${book.photo}` : null
+        }));
     }
 
     async getBookById(bookId) {
@@ -23,15 +28,22 @@ class BookService {
         const book = await Book.findById(bookId);
         if (!book) throw new Error('Book not found');
         if (book.owner.toString() !== userId) throw new Error('Unauthorized');
-
-        return Book.findByIdAndUpdate(bookId, bookData, {new: true});
+        if (bookData.photo) book.photo = bookData.photo;
+        return Book.findByIdAndUpdate(bookId, bookData, { new: true });
     }
 
     async deleteBook(bookId, userId) {
+        console.log('Attempting to delete book with ID:', bookId); // Лог для перевірки ID
         const book = await Book.findById(bookId);
         if (!book) throw new Error('Book not found');
         if (book.owner.toString() !== userId) throw new Error('Unauthorized');
 
+        if (book.photo) {
+            const photoPath = path.join(__dirname, '..', '..', book.photo); // Тепер path підключено
+            fs.unlink(photoPath, (err) => {
+                if (err) console.error('Error deleting photo:', err);
+            });
+        }
         await Reservation.deleteMany({ book: bookId });
         return Book.findByIdAndDelete(bookId);
     }
