@@ -49,6 +49,20 @@ class AuthController {
         }
     }
 
+    async getProfile(req, res) {
+        try {
+            const userId = req.user.id; // ID користувача з токена
+            const user = await User.findById(userId).select('username email'); // Вибираємо лише username і email
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            res.json({ username: user.username, email: user.email });
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching user profile', error: error.message });
+        }
+    }
 }
 
 module.exports = new AuthController();

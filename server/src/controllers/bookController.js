@@ -50,6 +50,30 @@ class BookController {
             res.status(400).json({ message: 'Error deleting book', error });
         }
     }
+    async getUserBooks(req, res) {
+        try {
+            const userId = req.user.id;
+            const books = await BookService.getBooksByOwner(userId);
+            res.json(books);
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching user books', error: error.message });
+        }
+    }
+
+    async getBookDetails(req, res) {
+        try {
+            const bookId = req.params.id;
+            const book = await BookService.getBookById(bookId);
+
+            if (!book) {
+                return res.status(404).json({ message: 'Book not found' });
+            }
+
+            res.json(book);
+        } catch (error) {
+            res.status(500).json({ message: 'Error fetching book details', error: error.message });
+        }
+    }
 }
 
 module.exports = new BookController();

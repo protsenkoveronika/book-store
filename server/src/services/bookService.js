@@ -17,7 +17,25 @@ class BookService {
     }
 
     async getBookById(bookId) {
-        return Book.findById(bookId).populate('owner', 'username');
+        const book = await Book.findById(bookId)
+            .populate('owner', 'username contactPhone')
+            .lean();
+
+        if (!book) return null;
+
+        return {
+            id: book._id,
+            name: book.name,
+            author: book.author,
+            location: book.location,
+            description: book.description,
+            photo: book.photo ? `http://localhost:8000/${book.photo}` : null,
+            owner: {
+                username: book.owner.username,
+                contactPhone: book.contactPhone
+            },
+            createdAt: book.createdAt
+        };
     }
 
     async createBook(bookData, ownerId) {
@@ -56,6 +74,14 @@ class BookService {
         await book.save();
 
         return await Reservation.create({ ...reservationData, book: bookId, reservedBy: userId });
+    }
+
+    async getBooksByOwner(ownerId) {
+        const books = await Book.find({ owner: ownerId }).populate('owner', 'username email');
+        return books.map(book => ({
+            ...book._doc,
+            photo: book.photo ? `http://localhost:8000/${book.photo}` : null
+        }));
     }
 }
 

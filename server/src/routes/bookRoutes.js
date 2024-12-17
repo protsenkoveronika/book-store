@@ -13,6 +13,8 @@ const upload = multer({ storage: multer.diskStorage({
     })});
 
 router.get('/', bookController.getAllBooks);
+router.get('/my-books', authenticate, bookController.getUserBooks);
+router.get('/:id', bookController.getBookDetails);
 router.post('/new', authenticate, upload.single('photo'), bookController.createBook);
 router.put('/upload/:id', authenticate, upload.single('photo'), bookController.updateBook);
 router.delete('/delete/:id', authenticate, bookController.deleteBook);
