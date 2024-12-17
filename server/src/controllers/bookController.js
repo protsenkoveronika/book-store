@@ -63,7 +63,9 @@ class BookController {
     async getBookDetails(req, res) {
         try {
             const bookId = req.params.id;
-            const book = await BookService.getBookById(bookId);
+            const userId = req.user ? req.user.id : null;
+
+            const book = await BookService.getBookById(bookId, userId);
 
             if (!book) {
                 return res.status(404).json({ message: 'Book not found' });
@@ -74,6 +76,17 @@ class BookController {
             res.status(500).json({ message: 'Error fetching book details', error: error.message });
         }
     }
+    async getUserReservations(req, res) {
+        try {
+            const userId = req.user.id;
+            const reservations = await BookService.getUserReservations(userId);
+            res.json(reservations);
+        } catch (error) {
+            console.error('Error fetching user reservations:', error.message);
+            res.status(500).json({ message: 'Error fetching user reservations', error: error.message });
+        }
+    }
+
 }
 
 module.exports = new BookController();

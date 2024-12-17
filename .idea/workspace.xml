@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8b559fe5-393b-4338-b873-dbee791412cd" name="Changes" comment="Add auth logic and books CRUD">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="8b559fe5-393b-4338-b873-dbee791412cd" name="Changes" comment="Add pages: my books, book detail, user detail">
       <change afterPath="$PROJECT_DIR$/server/.idea/server.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/.bin/color-support" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/.bin/color-support.cmd" afterDir="false" />
@@ -907,7 +906,6 @@
       <change afterPath="$PROJECT_DIR$/server/node_modules/mime-types/README.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/mime-types/index.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/mime-types/package.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/node_modules/mime/.npmignore" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/mime/CHANGELOG.md" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/mime/LICENSE" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/mime/README.md" afterDir="false" />
@@ -2164,7 +2162,6 @@
       <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/napi.h" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/node_api.gyp" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/noexcept.gypi" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/nothing.c" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/package-support.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/package.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/tools/README.md" afterDir="false" />
@@ -2664,14 +2661,14 @@
       <change afterPath="$PROJECT_DIR$/server/node_modules/yallist/iterator.js" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/yallist/package.json" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/server/node_modules/yallist/yallist.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/uploads/1734389409162-images.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/uploads/1734389605562-AI.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/uploads/1734389718653-AI.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server/uploads/1734389882146-images.jpg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/controllers/authController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/authController.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/controllers/reservationController.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server/src/routes/reservationRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/app.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/controllers/bookController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/controllers/bookController.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server/src/routes/authRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/authRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/controllers/userController.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/node_modules/mime/.npmignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/routes/bookRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/routes/bookRoutes.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server/src/routes/userRoutes.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/node_modules/node-addon-api/nothing.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/server/src/services/bookService.js" beforeDir="false" afterPath="$PROJECT_DIR$/server/src/services/bookService.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -2770,7 +2767,7 @@
       <updated>1732225991269</updated>
       <workItem from="1732225992319" duration="13598000" />
       <workItem from="1734356940765" duration="1511000" />
-      <workItem from="1734358471984" duration="25349000" />
+      <workItem from="1734358471984" duration="39181000" />
     </task>
     <task id="LOCAL-00001" summary="Add project structure (backend), connection with DB, models and logic">
       <option name="closed" value="true" />
@@ -2796,7 +2793,15 @@
       <option name="project" value="LOCAL" />
       <updated>1734390418577</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Add pages: my books, book detail, user detail">
+      <option name="closed" value="true" />
+      <created>1734399706929</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1734399706929</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -2817,6 +2822,7 @@
     <MESSAGE value="Add project structure (backend), connection with DB, models and logic" />
     <MESSAGE value="Update README.md" />
     <MESSAGE value="Add auth logic and books CRUD" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add auth logic and books CRUD" />
+    <MESSAGE value="Add pages: my books, book detail, user detail" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add pages: my books, book detail, user detail" />
   </component>
 </project>

@@ -16,26 +16,55 @@ class BookService {
         }));
     }
 
-    async getBookById(bookId) {
+    async getBookById(bookId, userId = null) {
         const book = await Book.findById(bookId)
             .populate('owner', 'username contactPhone')
             .lean();
 
         if (!book) return null;
 
-        return {
+        const reservation = await Reservation.findOne({ book: bookId }).lean();
+
+        const response = {
             id: book._id,
             name: book.name,
             author: book.author,
             location: book.location,
             description: book.description,
             photo: book.photo ? `http://localhost:8000/${book.photo}` : null,
+            status: book.status,
+            createdAt: book.createdAt,
             owner: {
                 username: book.owner.username,
                 contactPhone: book.contactPhone
             },
-            createdAt: book.createdAt
+            reservation: {
+                firstName: reservation.firstName,
+                lastName: reservation.lastName,
+                address: reservation.address,
+                phoneNumber: reservation.phoneNumber
+            }
         };
+
+        // if (userId) {
+        //     const reservation = await Reservation.findOne({ book: bookId }).lean();
+        //
+        //     if (reservation) {
+        //         const isOwner = book.owner._id.toString() === userId;
+        //         const isReservedByUser = reservation.reservedBy.toString() === userId;
+        //
+        //         if (isOwner || isReservedByUser) {
+        //             response.reservation = {
+        //                 firstName: reservation.firstName,
+        //                 lastName: reservation.lastName,
+        //                 address: reservation.address,
+        //                 phoneNumber: reservation.phoneNumber
+        //             };
+        //         }
+        //     }
+        // }
+
+        return response;
     }
 
     async createBook(bookData, ownerId) {
@@ -83,6 +112,36 @@ class BookService {
             photo: book.photo ? `http://localhost:8000/${book.photo}` : null
         }));
     }
+
+    async getUserReservations(userId) {
+        const reservations = await Reservation.find({ reservedBy: userId })
+            .populate({
+                path: 'book',
+                select: 'name author location description photo status',
+                populate: { path: 'owner', select: 'username' }
+            })
+            .lean();
+
+        return reservations.map(reservation => ({
+            id: reservation._id,
+            book: {
+                id: reservation.book._id,
+                name: reservation.book.name,
+                author: reservation.book.author,
+                location: reservation.book.location,
+                description: reservation.book.description,
+                photo: reservation.book.photo ? `http://localhost:8000/${reservation.book.photo}` : null,
+                status: reservation.book.status,
+                owner: reservation.book.owner.username
+            },
+            reservedAt: reservation.createdAt,
+            firstName: reservation.firstName,
+            lastName: reservation.lastName,
+            address: reservation.address,
+            phoneNumber: reservation.phoneNumber
+        }));
+    }
+
 }
 
 module.exports = new BookService();
