@@ -23,7 +23,18 @@ class BookService {
 
         if (!book) return null;
 
-        const reservation = await Reservation.findOne({ book: bookId }).lean();
+        let reservation = null;
+        if (book.status === 'reserved') {
+            const foundReservation = await Reservation.findOne({ book: bookId }).lean();
+            if (foundReservation) {
+                reservation = {
+                    firstName: foundReservation.firstName,
+                    lastName: foundReservation.lastName,
+                    address: foundReservation.address,
+                    phoneNumber: foundReservation.phoneNumber
+                };
+            }
+        }
 
         const response = {
             id: book._id,
@@ -35,35 +46,12 @@ class BookService {
             status: book.status,
             createdAt: book.createdAt,
             owner: {
+                _id: book.owner._id,
                 username: book.owner.username,
                 contactPhone: book.contactPhone
             },
-            reservation: {
-                firstName: reservation.firstName,
-                lastName: reservation.lastName,
-                address: reservation.address,
-                phoneNumber: reservation.phoneNumber
-            }
+            reservation: reservation
         };
-
-        // if (userId) {
-        //     const reservation = await Reservation.findOne({ book: bookId }).lean();
-        //
-        //     if (reservation) {
-        //         const isOwner = book.owner._id.toString() === userId;
-        //         const isReservedByUser = reservation.reservedBy.toString() === userId;
-        //
-        //         if (isOwner || isReservedByUser) {
-        //             response.reservation = {
-        //                 firstName: reservation.firstName,
-        //                 lastName: reservation.lastName,
-        //                 address: reservation.address,
-        //                 phoneNumber: reservation.phoneNumber
-        //             };
-        //         }
-        //     }
-        // }
-
         return response;
     }
 
