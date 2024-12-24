@@ -1,26 +1,26 @@
 <template>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-
-  <h1>Newest books</h1>
-  <p class="subheading">Explore our extensive collection of books today!</p>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+  <div class="header">
+    <h1>Your orders</h1>
+  </div>
+  <p class="subheading">Read with pleasure!</p>
   <section class="grid" :style="{
-      'grid-template-columns': books.length < 6
+      'grid-template-columns': reservations.length < 6
         ? 'repeat(auto-fit, minmax(155px, 160px))'
         : 'repeat(auto-fit, minmax(155px, 0.5fr))'
-    }">
-    <div class="card" v-for="book in books" :key="book.id">
-      <a :href="`/book/${book._id}`" class="card-link">
+    }"
+  >
+    <div class="card" v-for="reservation in reservations" :key="reservation.id">
+      <a :href="`/myOrder/${reservation.book.id}`" class="card-link">
         <div class="image-placeholder">
-          <img :src="book.photo" alt="Book image" />
+          <img :src="reservation.book.photo" alt="Book image" />
         </div>
-        <div class="book-title">{{ book.name}}</div>
-        <p class="author">{{ book.author }}</p>
+        <div class="book-title">{{ reservation.book.name }}</div>
+        <p class="author">{{ reservation.book.author }}</p>
         <p class="location">
-          <i class="fa-solid fa-location-dot"></i> {{ book.location }}
+          <i class="fa-solid fa-location-dot"></i> {{ reservation.book.location }}
         </p>
       </a>
-      <a v-if="book.status !== 'reserved'" class="btn" :href="`/takeBook/${book._id}`">Take</a>
-      <a v-else class="btn taken" :href="`/book/${book._id}`">Taken</a>
     </div>
   </section>
 </template>
@@ -29,24 +29,22 @@
 import BooksService from "@/services/BooksService";
 
 export default {
-  // eslint-disable-next-line
-  name: "Books",
+  name: "MyOrders",
   data() {
     return {
-      books: [],
+      reservations: [], // Store reservations instead of books
     };
   },
   mounted() {
-    this.loadBooks();
+    this.loadReservations();
   },
   methods: {
-    async loadBooks() {
+    async loadReservations() {
       try {
-        const response = await BooksService.getAll();
-        this.books = response.data;
-        // this.books = response.data.filter((book) => book.status !== "reserved"); //this way
+        const response = await BooksService.getUserReservations();
+        this.reservations = response.data; // Use reservations data
       } catch (error) {
-        console.error("Error loading books:", error);
+        console.error("Error loading reservations:", error);
       }
     },
   },
@@ -55,6 +53,34 @@ export default {
 
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-book-btn {
+  border: none;
+  background: #3A2970;
+  padding: 5px 100px;
+  color: white;
+}
+
+.btn.add-book-btn {
+  border-radius: 100px;
+}
+
+.add-book-btn:hover {
+  background: #4c3991;
+  color: white;
+}
+
+.add-book-btn:focus {
+  outline: none;
+  box-shadow: none;
+  background: #3A2970;
+}
+
 h1 {
   font-size: 30px;
   font-weight: bold;

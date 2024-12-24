@@ -1,24 +1,24 @@
 <template>
-  <div class="container mt-5">
-    <div class="row">
-      <div class="col-md-6 offset-md-3">
-        <h2>Log in</h2>
-        <form @submit.prevent="submitForm">
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input v-model="formData.email" type="email" class="form-control" id="email" placeholder="Enter your email">
-          </div>
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input v-model="formData.password" type="password" class="form-control" id="password" placeholder="Enter your password">
-          </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
-          <span class="error-message" style="margin-left: 10px">{{ validationErrors.log }}</span>
-        </form>
+  <div class="log-container">
+    <h2>Log In</h2>
+    <p>
+      Quick access to Your Account and opportunity to exchange your favourite books.
+    </p>
+    <form @submit.prevent="submitForm">
+      <div class="form-group">
+        <input v-model="formData.email" type="email" class="form-control" id="email" placeholder="Your Email Address">
       </div>
-    </div>
+      <div class="form-group">
+        <input v-model="formData.password" type="password" class="form-control" id="password" placeholder="Your Password">
+      </div>
+      <span class="error-message">{{ validationErrors.log }}</span>
+      <div class="button">
+        <button type="submit" class="btn">Log In</button>
+      </div>
+    </form>
   </div>
 </template>
+
 
 <script>
 import UsersService from "../services/UsersService.js";
@@ -33,36 +33,44 @@ export default {
         password: "",
       },
       validationErrors: {
-        log: ""
+        log: "",
       },
     };
   },
   methods: {
-    ...mapMutations(['setLogCheck', 'setAdminCheck']),
+    ...mapMutations(['setLogCheck', 'setAdminCheck', 'setUser']),
 
     async submitForm() {
-      try {
-        this.validationErrors.log = "";
+      this.validationErrors.log = "";
 
+      if (!this.formData.email || !this.formData.password) {
+        this.validationErrors.log = "Both fields are required";
+        return;
+      }
+
+      try {
         const response = await UsersService.login(this.formData);
 
-        if (response.data) {
-          this.resetForm();
-          this.setLogCheck(true);
+        if (response.data && response.data.token) {
+          localStorage.setItem("token", response.data.token);
 
-          if (response.data.role === 'Administrator') {
+          this.setLogCheck(true);
+          localStorage.setItem("user", JSON.stringify(response.data.user));
+          this.setUser(response.data.user);
+
+          if (response.data.role === "Administrator") {
             this.setAdminCheck(true);
           }
-          this.$router.push('/');
-          console.log("User logged in successfully:", response.data);
 
+          this.resetForm();
 
+          this.$router.push("/");
         } else {
           this.validationErrors.log = "Invalid email or password";
-          console.error("Invalid email or password");
         }
       } catch (error) {
-        console.error("Error during login:", error);
+        this.validationErrors.log = "Invalid credentials. Please try again.";
+        console.error("Login error:", error);
       }
     },
 
@@ -75,99 +83,74 @@ export default {
         log: "",
       };
     },
-
   },
 };
 </script>
 
+
 <style scoped>
+.log-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 73px 50px 0 50px;
+  padding: 30px 0;
+}
+
+form {
+  width: 380px;
+}
+
 h2 {
   text-align: center;
   margin: 0;
-  margin-bottom: 10px;
-}
-
-h4 {
-  margin: 5px 0 0 0;
-  padding-left: 5px;
-  background-color: rgba(255, 233, 143, 0.53);
-}
-
-.col-md-6.offset-md-3 {
-  margin-left: 13%;
-}
-
-.mt-5, .my-5 {
-  margin-bottom: 3rem!important;
-}
-
-.main_contacts li {
-  margin: 10px 0;
-}
-
-.main_contacts a {
-  margin-left: 30%!important;
-  color: #212529!important;
-}
-
-.main_contacts i {
-  margin-right: 8px;
-}
-
-.error-message {
-  color: red;
-}
-
-tbody th {
-  font-size: 0.75rem;
-}
-
-tbody .btn {
-  font-size: 0.75rem;
-  line-height: 1;
-}
-
-.table-responsive {
-  margin-bottom: 10px;
-}
-
-footer {
-  display: flex;
-  padding-top: 10px;
-  background-color: rgba(51, 51, 51, 0.96);
-  color: white;
-  justify-content: center;
-}
-
-h6 {
   font-weight: bold;
-  margin: 0;
 }
 
-.row {
-  width: 95%;
+p {
+  margin: 10px 0 20px 0;
+  font-size: 13px;
+  text-align-last: center;
+}
+
+input {
+  font-size: small;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+.button {
+  display: flex;
   justify-content: center;
   padding: 0;
 }
 
-.row p {
-  padding: 10px;
+.btn {
+  border: none;
+  background: #3A2970;
+  border-radius: 30px;
+  padding: 3px 100px;
+  margin-top: 5px;
+  color: white;
 }
 
-
-.col-sm a{
-  color: #ffffff;
-  text-decoration: none;
+.btn:hover {
+  background: #4c3991;
+  color: white;
 }
 
-.col-sm a:hover i {
-  transition: transform 0.3s;
-  transform: scale(1.2);
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+  background: #3A2970;
 }
 
-.col-sm ul {
-  color: #ffffff;
-  list-style: none;
+.error-message {
+  color: red;
+  font-size: small;
 }
 
 </style>

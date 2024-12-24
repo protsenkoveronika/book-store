@@ -2,23 +2,59 @@ import http from "../http-common";
 
 class BooksService {
     getAll() {
-        return http.get("/allBooks");
+        return http.get("/");
     }
 
-    get(id) {
-        return http.get(`/book/${id}`);
+    getUserReservations() {
+        const token = localStorage.getItem("token");
+        return http.get("/reservations", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 
-    create(offer) {
-        return http.post("/createBook", book);
+    getUserBooks() {
+        const token = localStorage.getItem("token");
+        return http.get("/my-books", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 
-    update(id, offer) {
-        return http.put(`/updateBook/${id}`, book);
+    get(_id) {
+        return http.get(`/${_id}`);
     }
 
-    delete(id) {
-        return http.delete(`/deleteBook/${id}`);
+    create(formData) {
+        const token = localStorage.getItem("token");
+        return http.post("/new", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            }
+        });
+    }
+
+    update(_id, formData) {
+        const token = localStorage.getItem("token");
+        return http.put(`/upload/${_id}`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            }
+        });
+    }
+
+    delete(_id) {
+        const token = localStorage.getItem("token");
+        return http.delete(`/delete/${_id}`, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+            }
+        });
     }
 }
 

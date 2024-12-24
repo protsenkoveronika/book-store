@@ -1,15 +1,18 @@
 <template>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
-  <h1>Newest books</h1>
-  <p class="subheading">Explore our extensive collection of books today!</p>
+  <div class="header">
+    <h1>Your books</h1>
+    <a href="/addBook" class="btn add-book-btn">+ Add Book</a>
+  </div>
+  <p class="subheading">Manage, edit, and offer with ease - your books, your way!</p>
   <section class="grid" :style="{
-      'grid-template-columns': books.length < 6
+        'grid-template-columns': books.length < 6
         ? 'repeat(auto-fit, minmax(155px, 160px))'
         : 'repeat(auto-fit, minmax(155px, 0.5fr))'
     }">
     <div class="card" v-for="book in books" :key="book.id">
-      <a :href="`/book/${book._id}`" class="card-link">
+      <a :href="`/myBook/${book._id}`" class="card-link">
         <div class="image-placeholder">
           <img :src="book.photo" alt="Book image" />
         </div>
@@ -19,14 +22,15 @@
           <i class="fa-solid fa-location-dot"></i> {{ book.location }}
         </p>
       </a>
-      <a v-if="book.status !== 'reserved'" class="btn" :href="`/takeBook/${book._id}`">Take</a>
-      <a v-else class="btn taken" :href="`/book/${book._id}`">Taken</a>
+      <a v-if="book.status !== 'reserved'" class="btn" :href="`/editBook/${book._id}`">Edit</a>
+      <a v-else class="btn taken" :href="`/myBook/${book._id}`">Taken</a>
     </div>
   </section>
 </template>
 
 <script>
 import BooksService from "@/services/BooksService";
+import {mapState} from "vuex";
 
 export default {
   // eslint-disable-next-line
@@ -36,15 +40,19 @@ export default {
       books: [],
     };
   },
+  computed: {
+    ...mapState(["user"]), // Access the active user from Vuex store
+  },
   mounted() {
     this.loadBooks();
   },
   methods: {
     async loadBooks() {
       try {
-        const response = await BooksService.getAll();
+        const response = await BooksService.getUserBooks();
+        // console.log("User from Vuex store:", this.$store.state.user);
+        // this.books = response.data.filter((book) => book.owner._id === this.user.id);
         this.books = response.data;
-        // this.books = response.data.filter((book) => book.status !== "reserved"); //this way
       } catch (error) {
         console.error("Error loading books:", error);
       }
@@ -55,6 +63,34 @@ export default {
 
 
 <style scoped>
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.add-book-btn {
+  border: none;
+  background: #3A2970;
+  padding: 5px 100px;
+  color: white;
+}
+
+.btn.add-book-btn {
+  border-radius: 100px;
+}
+
+.add-book-btn:hover {
+  background: #4c3991;
+  color: white;
+}
+
+.add-book-btn:focus {
+  outline: none;
+  box-shadow: none;
+  background: #3A2970;
+}
+
 h1 {
   font-size: 30px;
   font-weight: bold;

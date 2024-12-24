@@ -1,16 +1,22 @@
 import http from "../http-common";
 
 class OrdersService {
-    getAll() {
-        return http.get("/allOrders");
+    getBookReservation(bookId) {
+        const token = localStorage.getItem("token");
+        return http.get(`/reservation/${bookId}`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 
-    get(id) {
-        return http.get(`/order/${id}`);
-    }
-
-    create(order) {
-        return http.post("/createOrder", order);
+    createOrder(_id, reservationData) {
+        const token = localStorage.getItem("token");
+        return http.post(`/reserve/${_id}`, reservationData, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
     }
 }
 
